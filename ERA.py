@@ -13,14 +13,10 @@ df = pd.merge(pitching_df, people_df, on='playerID')
 df['age'] = df['yearID'] - df['birthYear']
 
 # Filter out records where 'ERA' is 0 and 'age' is not within a reasonable range
-df = df[(df['ERA'] != 0) & (df['age'] >= 20) & (df['age'] <= 38) & (df['IPouts'] > 150)]
+df = df[(df['ERA'] != 0) & (df['age'] >= 20) & (df['age'] <= 40) & (df['IPouts'] > 150)]
 
 # Scatter plot of each player's ERA at their specific age
 plt.scatter(df['age'], df['ERA'], alpha=0.5)
-
-# Calculate the mean ERA for each age and plot it
-mean_eras = df.groupby('age')['ERA'].mean()
-plt.plot(mean_eras.index, mean_eras.values, color='red', linewidth=2)
 
 # Show the plot with labels
 plt.xlabel('Age')
