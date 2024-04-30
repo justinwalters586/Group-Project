@@ -1,9 +1,6 @@
 import pandas as pd
 import matplotlib.pyplot as plt
-<<<<<<< HEAD
 import numpy as np
-=======
->>>>>>> 2e7ec041c551091fde6775a43f8ada0360a06c23
 
 # Load the data
 batting_df = pd.read_excel('C:/Users/WaltersJ07/Downloads/Batting.xlsx')
@@ -16,11 +13,7 @@ df = pd.merge(batting_df, people_df, on='playerID')
 df['age'] = df['yearID'] - df['birthYear']
 
 # Filter out records where 'AB' is less than 200 and 'age' is not within a reasonable range
-<<<<<<< HEAD
 df = df[(df['AB'] >= 100) & (df['age'] >= 20) & (df['age'] <= 40)]
-=======
-df = df[(df['AB'] >= 300) & (df['age'] >= 20) & (df['age'] <= 38)]
->>>>>>> 2e7ec041c551091fde6775a43f8ada0360a06c23
 
 # Group the data by age and playerID and sum up 'HR' for each player at each age
 grouped_by_age_and_player = df.groupby(['age', 'playerID']).agg(
@@ -30,9 +23,8 @@ grouped_by_age_and_player = df.groupby(['age', 'playerID']).agg(
 # Reset index to make 'age' and 'playerID' as columns again
 grouped_by_age_and_player.reset_index(inplace=True)
 
-<<<<<<< HEAD
 # Calculate the 99th percentile of home runs for each age
-grouped_by_age_and_player['top_1_percent'] = grouped_by_age_and_player.groupby('age')['total_home_runs'].transform(lambda x: x.quantile(0.99))
+grouped_by_age_and_player['top_1_percent'] = grouped_by_age_and_player.groupby('age')['total_home_runs'].transform(lambda x: x.quantile(0.9995))
 
 # Filter out the rows that are not in the top 1% of home run hitters for each age
 top_1_percent_df = grouped_by_age_and_player[grouped_by_age_and_player['total_home_runs'] >= grouped_by_age_and_player['top_1_percent']]
@@ -57,10 +49,6 @@ for age in peak_ages:
 # Create a scatter plot
 plt.scatter(grouped_by_age_and_player['age'], grouped_by_age_and_player['total_home_runs'])
 plt.plot(top_1_percent_df['age'], p(top_1_percent_df['age']), "r--")
-=======
-# Create a scatter plot
-plt.scatter(grouped_by_age_and_player['age'], grouped_by_age_and_player['total_home_runs'])
->>>>>>> 2e7ec041c551091fde6775a43f8ada0360a06c23
 plt.xlabel('Age')
 plt.ylabel('Home Runs')
 plt.title('Home Runs by Age')
