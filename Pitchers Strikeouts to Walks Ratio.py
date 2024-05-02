@@ -19,10 +19,39 @@ df = df[(df['BB'] !=0) & (df['SO'] !=0) & (df['IPouts'] >=150) & (df['age'] >= 2
 # Add a small constant to avoid division by zero
 df['strikeouts_walks_ratio'] = df['SO'] / (df['BB'] + np.finfo(float).eps)
 
-# Create a scatter plot of each player's Strikeouts-Walks Ratio at each age
-plt.scatter(df['age'], df['strikeouts_walks_ratio'], alpha=0.5)
+# Calculate the 99th percentile of batting average for each age
+df['top_1_percent'] = df.groupby('age')['strikeouts_walks_ratio'].transform(lambda x: x.quantile(0.9995))
+
+# Filter out the rows that are not in the top 1% of batting average for each age
+top_1_percent_df = df[df['strikeouts_walks_ratio'] >= df['top_1_percent']]
+
+# Fit a quadratic curve (degree=2) to these points
+z = np.polyfit(top_1_percent_df['age'], top_1_percent_df['strikeouts_walks_ratio'], 2)
+p = np.poly1d(z)
+
+# Calculate the derivative of the polynomial
+p_derivative = p.deriv()
+
+# Find the roots of the derivative (i.e., the values of x where the slope is 0)
+roots = np.roots(p_derivative)
+
+# Filter out the roots that are outside the range of ages
+peak_ages = roots[(roots >= df['age'].min()) & (roots <= df['age'].max())]
+
+# Print out the peak performance ages
+for age in peak_ages:
+    print(f'Peak performance age: {age}')
+
+# Sort top_1_percent_df by 'age'
+top_1_percent_df = top_1_percent_df.sort_values('age')
+
+# Create a scatter plot
+plt.scatter(df['age'], df['strikeouts_walks_ratio'])
+
+# Plot the trendline using the sorted DataFrame
+plt.plot(top_1_percent_df['age'], p(top_1_percent_df['age']), "r--")
 
 plt.xlabel('Age')
-plt.ylabel('Strikeouts-Walks Ratio')
-plt.title('Strikeouts-Walks Ratio by Age')
+plt.ylabel('Strikeouts to Walks Ratio')
+plt.title('Strikeouts to Walks Ratio by Age')
 plt.show()
